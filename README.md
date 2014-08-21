@@ -5,7 +5,7 @@ Raspberry Pi Thermometer project meant for displaying thermometer data collected
 
 data layout
 ===========
-
+```
 pi-mometer (collection)
 +--------------------------------------+
 |  Pulled Pork (document)              |
@@ -32,3 +32,4 @@ pi-mometer (collection)
 |  |   {'12-01-2014-1637': '142'}] |   |
 |  +-------------------------------+   |
 +--------------------------------------+
+```
