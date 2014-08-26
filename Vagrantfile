@@ -16,7 +16,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     rsync__auto: true
 
   config.vm.provision "shell",
-    inline: "apt-get -yqq install python-django python-mongoengine mongodb-server"
+    inline: "apt-get -yqq install python-django python-mongoengine python-pip mongodb-server"
+
+  config.vm.provision "shell",
+    inline: "pip install djangorestframework markdown django-filter"
 
   config.vm.provision "shell",
     inline: "sed -i 's/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/' /etc/mongodb.conf && /etc/init.d/mongodb restart"
