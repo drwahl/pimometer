@@ -38,15 +38,15 @@ import json
 from ConfigParser import SafeConfigParser
 
 parser = SafeConfigParser()
-if os.path.isfile('/etc/pi-mometer/pi-mometer.conf'):
-    config = '/etc/pi-mometer/pi-mometer.conf'
+if os.path.isfile('/etc/pimometer/pimometer.conf'):
+    config = '/etc/pimometer/pimometer.conf'
 else:
-    config = os.path.join(os.path.dirname(__file__), '../conf/pi-mometer.conf')
+    config = os.path.join(os.path.dirname(__file__), '../conf/pimometer.conf')
 parser.read(config)
 
-mongodb_host = parser.get('pi-mometer', 'host')
-dbname = parser.get('pi-mometer', 'database')
-collection_name = parser.get('pi-mometer', 'collection')
+mongodb_host = parser.get('pimometer', 'host')
+dbname = parser.get('pimometer', 'database')
+collection_name = parser.get('pimometer', 'collection')
 
 logging.basicConfig(
     level=logging.WARN,
@@ -54,8 +54,8 @@ logging.basicConfig(
     datefmt='%y.%m.%d %H:%M:%S')
 console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
-logging.getLogger('pi-mometer').addHandler(console)
-log = logging.getLogger('pi-mometer')
+logging.getLogger('pimometer').addHandler(console)
+log = logging.getLogger('pimometer')
 
 
 def configure():
