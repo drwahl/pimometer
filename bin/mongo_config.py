@@ -90,11 +90,14 @@ def update_config(collection, event=None, poll_interval=60):
     else:
         cursor = json.load(urllib2.urlopen(collection))['rows']
 
+    if event == 'None':
+        event = None
+
     collection.update(
             {'_id': 'client_config'},
             {"$set": {
                 'current_event': event,
-                'poll_interval': poll_interval}},
+                'poll_interval': float(poll_interval)}},
             upsert=True)
 
 def get_config(collection):

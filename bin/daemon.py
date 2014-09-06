@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import datetime
 import time
 import pimometer
 try:
@@ -27,13 +28,15 @@ def get_poll_interval(collection):
     """
     cursor = connect(collection)
     try:
-        poll_interval = cursor['client_config']['poll_interval']
+        for doc in cursor:
+            if doc['_id'] == 'client_config':
+                poll_interval = doc['poll_interval']
     except:
         poll_interval = 60
         collection.update(
                 {'_id': 'client_config'},
                 {"$set": {
-                    'poll_interval': poll_interval}},
+                    'poll_interval': float(poll_interval)}},
                 upsert=True)
 
     return poll_interval
@@ -44,7 +47,9 @@ def get_current_event(collection):
     """
     cursor = connect(collection)
     try:
-        event = cursor['client_config']['current_event']
+        for doc in cursor:
+            if doc['_id'] == 'client_config':
+                event = doc['current_event']
     except:
         event = None
         collection.update(
@@ -64,9 +69,10 @@ def run():
 
         if event != None:
             client_collection = pimometer.configure()
-            sensor1 = None #this needs to pull data from the sensor
-            sensor2 = None #this needs to pull data from the sensor
-            pimometer.update_event(event=event, s1=sensor1, s2=sensor2, collection=client_collection)
+            timestamp = datetime.datetime.now().isoformat()
+            sensor1 = 165 #this needs to pull data from the sensor
+            sensor2 = 163 #this needs to pull data from the sensor
+            pimometer.update_event(event=event, s1=sensor1, s2=sensor2, collection=client_collection, timestamp=timestamp)
 
         time.sleep(poll_interval)
 
