@@ -70,8 +70,8 @@ def run():
         if event != None:
             client_collection = pimometer.configure()
             timestamp = datetime.datetime.now().isoformat()
-            sensor1 = 165 #this needs to pull data from the sensor
-            sensor2 = 163 #this needs to pull data from the sensor
+            sensor1 = float(165) #this needs to pull data from the sensor
+            sensor2 = float(163) #this needs to pull data from the sensor
             pimometer.update_event(event=event, s1=sensor1, s2=sensor2, collection=client_collection, timestamp=timestamp)
 
         time.sleep(poll_interval)

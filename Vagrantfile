@@ -22,10 +22,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inline: "pip -q install djangorestframework django-rest-framework-mongoengine markdown django-filter"
 
   config.vm.provision "shell",
-    inline: "sed -i 's/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/' /etc/mongodb.conf && echo 'jsonp = True' > /etc/mongodb.conf && /etc/init.d/mongodb restart"
+    inline: "/etc/init.d/mongodb stop && mongod --quiet --rest --jsonp --dbpath=/var/lib/mongodb --fork --logpath=/var/log/mongodb/mongodb.log"
 
   config.vm.provision "shell",
     inline: "mkdir -p /etc/pimometer && cp /vagrant/conf/pimometer.conf /etc/pimometer/pimometer.conf && chmod a+r /etc/pimometer/pimometer.conf"
+
+  config.vm.provision "shell",
+    inline: "/vagrant/bin/mongo_config.py -e 'test_event' -p 5"
+
+  config.vm.provision "shell",
+    inline: "/vagrant/bin/daemon.py &"
 
 #not bothering with django for now. just gonna use mongodb rest api
 #  config.vm.provision "shell",

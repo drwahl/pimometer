@@ -102,8 +102,8 @@ def update_event(collection, event, s1, s2, timestamp):
     collection.update(
             {'_id': event},
             {"$set": {
-                's1': float(s1_data),
-                's2': float(s2_data)}},
+                's1': s1_data,
+                's2': s2_data}},
             upsert=True)
 
 
