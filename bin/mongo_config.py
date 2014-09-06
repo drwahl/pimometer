@@ -79,81 +79,56 @@ def configure():
     return col
 
 
-def update_event(collection, event, s1, s2, timestamp):
+def update_config(collection, event=None, poll_interval=60):
     """
-    Update <event> document in MongoDB with tempuratures of sensor 1 (<s1>) and
-    sensor 2 (<s2>).
+    Update client configuration collection
     """
-    log.debug("in update_event(%s, %s, %s, %s, %s)" % (collection, event, s1, s2, timestamp))
+    log.debug("in update_config(%s, %s, %s,)" % (collection, event, poll_interval))
 
     if pymongo_driver:
         cursor = collection.find()
     else:
         cursor = json.load(urllib2.urlopen(collection))['rows']
-
-    s1_data = [{timestamp: s1}]
-    s2_data = [{timestamp: s2}]
-    for doc in cursor:
-        if doc['_id'] == event:
-            log.debug("found existing event. updating data...")
-            s1_data = doc['s1'] + s1_data
-            s2_data = doc['s2'] + s2_data
 
     collection.update(
-            {'_id': event},
+            {'_id': 'client_config'},
             {"$set": {
-                's1': s1_data,
-                's2': s2_data}},
+                'current_event': event,
+                'poll_interval': poll_interval}},
             upsert=True)
 
-
-def get_event_data(collection, event):
-    """
-    Dump event data for <event>.
-    """
-    log.debug("in get_event_data(%s, %s)" % (collection, event))
-
+def get_config(collection):
     if pymongo_driver:
         cursor = collection.find()
     else:
         cursor = json.load(urllib2.urlopen(collection))['rows']
 
-    ret = "ERROR: Event not found"
+    result = None
 
     for doc in cursor:
-        log.debug("iterating over doc: %s" % doc)
-        log.debug("searching for event %s in doc['_id'] %s" % (event, doc['_id']))
-        if doc['_id'] == event:
-            log.debug("found event %s in doc['_id'] %s" % (event, doc['_id']))
-            ret = doc
+        if doc['_id'] == 'client_config':
+            result = doc
 
-    return ret
+    return result
 
 
 def main():
     import argparse
 
-    cmd_parser = argparse.ArgumentParser(description='CLI for pimometer data.')
+    cmd_parser = argparse.ArgumentParser(description='Configure client_config for pimometer')
     cmd_parser.add_argument(
         '-g',
         '--get',
-        dest='get_event',
-        action='store',
-        help='Get the data from the specified event',
+        dest='get_config',
+        action='store_true',
+        help='Returns the current configuration for client_config',
         default=None)
     cmd_parser.add_argument(
-        '-1',
-        '--sensor1',
-        dest='s1',
+        '-p',
+        '--poll-interval',
+        dest='poll_interval',
         action='store',
-        help='Tempurature data from sensor 1',
-        default=None)
-    cmd_parser.add_argument(
-        '-2',
-        '--sensor2',
-        dest='s2',
-        action='store',
-        help='Tempurature data from sensor 2',
+        help='Value to set the poll interval to.',
         default=None)
     cmd_parser.add_argument(
         '-e',
@@ -176,16 +151,21 @@ def main():
 
     collection = configure()
 
-    if args.get_event:
-        print get_event_data(collection, args.get_event)
+    if args.get_config:
+        print get_config(collection)
     else:
-        if not args.event or not args.s1 or not args.s2:
-            print "ERROR: -1, -2, or -e not specified.\n"
+        if not args.event and not args.poll_interval:
+            print "ERROR: -e or -p not specified.\n"
             cmd_parser.print_help()
             sys.exit(1)
         else:
-            now = datetime.datetime.now().isoformat()
-            update_event(collection,args.event, args.s1, args.s2, now)
+            if args.event and args.poll_interval:
+                update_config(collection, args.event, args.poll_interval)
+            elif args.event:
+                update_config(collection, event=args.event)
+            elif args.poll_interval:
+                update_config(collection, poll_interval=args.poll_interval)
+
 
 if __name__ == "__main__":
     main()
