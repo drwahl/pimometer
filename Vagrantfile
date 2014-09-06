@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     inline: "apt-get -yqqq install python-django python-mongoengine python-pip mongodb-server"
 
   config.vm.provision "shell",
-    inline: "pip -q install djangorestframework markdown django-filter"
+    inline: "pip -q install djangorestframework django-rest-framework-mongoengine markdown django-filter"
 
   config.vm.provision "shell",
     inline: "sed -i 's/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/' /etc/mongodb.conf && /etc/init.d/mongodb restart"
