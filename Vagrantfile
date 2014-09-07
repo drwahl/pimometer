@@ -5,8 +5,13 @@
 VAGRANTFILE_API_VERSION = "2"
 
 $verify_webui = <<EOS
-  if [ -d /vagrant/pimomter/webui/ ]; then
+  if [ -d /vagrant/webui/ ]; then
     webui_installed=1
+    apt-get -y -qq install lighttpd
+    rm -rf /var/www/
+    ln -s /vagrant/webui /var/www
+    ln -s /var/www/thermometer.html /var/www/index.html
+    /etc/init.d/lighttpd restart
   else
     webui_installed=0
   fi
