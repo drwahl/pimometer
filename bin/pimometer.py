@@ -59,7 +59,9 @@ log = logging.getLogger('pimometer')
 
 
 def configure():
-    """Read configuration file and intialize connection to the mongodb instance"""
+    """
+    Read configuration file and intialize connection to the mongodb instance
+    """
     log.debug('in configure')
 
     host = mongodb_host
@@ -71,7 +73,8 @@ def configure():
     if pymongo_driver:
         log.debug('using pymongo driver for communications')
         con = Connection(host)
-        log.debug('selecting database/collection: %s/%s' % (database, collection))
+        log.debug('selecting database/collection: %s/%s' % (database,
+                                                            collection))
         col = con[database][collection]
     else:
         log.debug('using REST interface for communications')
@@ -84,7 +87,8 @@ def update_event(collection, event, s1, s2, timestamp):
     Update <event> document in MongoDB with tempuratures of sensor 1 (<s1>) and
     sensor 2 (<s2>).
     """
-    log.debug("in update_event(%s, %s, %s, %s, %s)" % (collection, event, s1, s2, timestamp))
+    log.debug("in update_event(%s, %s, %s, %s, %s)" % (collection, event,
+                                                       s1, s2, timestamp))
 
     s1_existing_data = collection.find_one({'_id': event})['s1']
     s2_existing_data = collection.find_one({'_id': event})['s2']
@@ -93,14 +97,14 @@ def update_event(collection, event, s1, s2, timestamp):
         s1_data = s1_existing_data + [{timestamp: s1}]
 
     if s2_existing_data:
-    s2_data = s2_existing_data + [{timestamp: s2}]
+        s2_data = s2_existing_data + [{timestamp: s2}]
 
     collection.update(
-            {'_id': event},
-            {"$set": {
-                's1': s1_data,
-                's2': s2_data}},
-            upsert=True)
+        {'_id': event},
+        {"$set": {
+            's1': s1_data,
+            's2': s2_data}},
+        upsert=True)
 
 
 def get_event_data(collection, event):
@@ -169,7 +173,7 @@ def main():
             sys.exit(1)
         else:
             now = datetime.datetime.now().isoformat()
-            update_event(collection,args.event, args.s1, args.s2, now)
+            update_event(collection, args.event, args.s1, args.s2, now)
 
 if __name__ == "__main__":
     main()

@@ -12,6 +12,7 @@ except ImportError:
     pymongo_driver = False
 import json
 
+
 def connect(collection):
     """
     Return a mongodb cursor
@@ -23,37 +24,42 @@ def connect(collection):
 
     return cursor
 
+
 def get_poll_interval(collection):
     """
     Determine the configured poll interval or make one up
     """
     try:
-        poll_interval = collection.find_one({'_id': 'client_config'})['poll_interval']
+        poll_interval = collection.find_one(
+            {'_id': 'client_config'})['poll_interval']
     except TypeError:
         poll_interval = 60
         collection.update(
-                {'_id': 'client_config'},
-                {"$set": {
-                    'poll_interval': float(poll_interval)}},
-                upsert=True)
+            {'_id': 'client_config'},
+            {"$set": {
+                'poll_interval': float(poll_interval)}},
+            upsert=True)
 
     return poll_interval
+
 
 def get_current_event(collection):
     """
     Determine the configured event
     """
     try:
-        event = collection.find_one({'_id': 'client_config'})['current_event']
+        event = collection.find_one(
+            {'_id': 'client_config'})['current_event']
     except:
         event = None
         collection.update(
-                {'_id': 'client_config'},
-                {"$set": {
-                    'current_event': event}},
-                upsert=True)
+            {'_id': 'client_config'},
+            {"$set": {
+                'current_event': event}},
+            upsert=True)
 
     return event
+
 
 def run(demo=False):
     coll = pimometer.configure()
@@ -64,21 +70,22 @@ def run(demo=False):
         client_collection = pimometer.configure()
         timestamp = datetime.datetime.now().isoformat()
 
-        #generate "random" data in for the event "demo"
-        #this is mostly useful for development/testing
+        # generate "random" data in for the event "demo"
+        # this is mostly useful for development/testing
         if demo:
             poll_interval = 5
-            sensor1 = float(random.randrange(170, 190)) #random data for demo/test purposes
-            sensor2 = float(sensor1 - random.randrange(1, 4)) #random data for demo/test purposes
+            # random data for demo/test purposes
+            sensor1 = float(random.randrange(170, 190))
+            sensor2 = float(sensor1 - random.randrange(1, 4))
             pimometer.update_event(event='demo',
                                    s1=sensor1,
                                    s2=sensor2,
                                    collection=client_collection,
                                    timestamp=timestamp)
 
-        if event != None:
-            sensor1 = 1 #need to pull data from sensor1
-            sensor2 = 2 #need to pull data from sensor2
+        if event is not None:
+            sensor1 = 1  # need to pull data from sensor1
+            sensor2 = 2  # need to pull data from sensor2
             pimometer.update_event(event=event,
                                    s1=sensor1,
                                    s2=sensor2,
@@ -86,6 +93,7 @@ def run(demo=False):
                                    timestamp=timestamp)
 
         time.sleep(poll_interval)
+
 
 if __name__ == "__main__":
     demo_run = False

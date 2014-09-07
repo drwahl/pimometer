@@ -59,7 +59,9 @@ log = logging.getLogger('pimometer-mongo-config')
 
 
 def configure():
-    """Read configuration file and intialize connection to the mongodb instance"""
+    """
+    Read configuration file and intialize connection to the mongodb instance
+    """
     log.debug('in configure')
 
     host = mongodb_host
@@ -71,7 +73,8 @@ def configure():
     if pymongo_driver:
         log.debug('using pymongo driver for communications')
         con = Connection(host)
-        log.debug('selecting database/collection: %s/%s' % (database, collection))
+        log.debug('selecting database/collection: %s/%s' % (database,
+                                                            collection))
         col = con[database][collection]
     else:
         log.debug('using REST interface for communications')
@@ -83,18 +86,21 @@ def update_config(collection, event=None, poll_interval=60):
     """
     Update client configuration collection
     """
-    log.debug("in update_config(%s, %s, %s,)" % (collection, event, poll_interval))
+    log.debug("in update_config(%s, %s, %s,)" % (collection,
+                                                 event,
+                                                 poll_interval))
 
-    #sometimes, we get a string instead of a NoneType
+    # sometimes, we get a string instead of a NoneType
     if event == 'None':
         event = None
 
     collection.update(
-            {'_id': 'client_config'},
-            {"$set": {
-                'current_event': event,
-                'poll_interval': float(poll_interval)}},
-            upsert=True)
+        {'_id': 'client_config'},
+        {"$set": {
+            'current_event': event,
+            'poll_interval': float(poll_interval)}},
+        upsert=True)
+
 
 def get_config(collection):
     config = collection.find_one({'_id': 'client_config'})
@@ -104,7 +110,8 @@ def get_config(collection):
 def main():
     import argparse
 
-    cmd_parser = argparse.ArgumentParser(description='Configure client_config for pimometer')
+    cmd_parser = argparse.ArgumentParser(
+        description='Configure client_config for pimometer')
     cmd_parser.add_argument(
         '-g',
         '--get',
