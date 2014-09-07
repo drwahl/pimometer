@@ -86,18 +86,14 @@ def update_event(collection, event, s1, s2, timestamp):
     """
     log.debug("in update_event(%s, %s, %s, %s, %s)" % (collection, event, s1, s2, timestamp))
 
-    if pymongo_driver:
-        cursor = collection.find()
-    else:
-        cursor = json.load(urllib2.urlopen(collection))['rows']
+    s1_existing_data = collection.find_one({'_id': event})['s1']
+    s2_existing_data = collection.find_one({'_id': event})['s2']
 
-    s1_data = [{timestamp: s1}]
-    s2_data = [{timestamp: s2}]
-    for doc in cursor:
-        if doc['_id'] == event:
-            log.debug("found existing event. updating data...")
-            s1_data = doc['s1'] + s1_data
-            s2_data = doc['s2'] + s2_data
+    if s1_existing_data:
+        s1_data = s1_existing_data + [{timestamp: s1}]
+
+    if s2_existing_data:
+    s2_data = s2_existing_data + [{timestamp: s2}]
 
     collection.update(
             {'_id': event},
@@ -113,21 +109,9 @@ def get_event_data(collection, event):
     """
     log.debug("in get_event_data(%s, %s)" % (collection, event))
 
-    if pymongo_driver:
-        cursor = collection.find()
-    else:
-        cursor = json.load(urllib2.urlopen(collection))['rows']
+    result = collection.find_one({'_id': event})
 
-    ret = "ERROR: Event not found"
-
-    for doc in cursor:
-        log.debug("iterating over doc: %s" % doc)
-        log.debug("searching for event %s in doc['_id'] %s" % (event, doc['_id']))
-        if doc['_id'] == event:
-            log.debug("found event %s in doc['_id'] %s" % (event, doc['_id']))
-            ret = doc
-
-    return ret
+    return result
 
 
 def main():
