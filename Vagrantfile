@@ -28,15 +28,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell",
     inline: "mkdir -p /etc/pimometer && cp /vagrant/conf/pimometer.conf /etc/pimometer/pimometer.conf && chmod a+r /etc/pimometer/pimometer.conf"
 
-#  config.vm.provision "shell",
-#    inline: "/vagrant/bin/mongo_config.py -e 'test_event' -p 5"
-
   config.vm.provision "shell",
     inline: "/vagrant/bin/daemon.py demo=True &"
-
-#not bothering with django for now. just gonna use mongodb rest api
-#  config.vm.provision "shell",
-#    inline: "/usr/bin/python /vagrant/pimometer/manage.py runserver 0.0.0.0:80 &"
 
   config.vm.provision "shell", inline: $welcome_script
 
