@@ -27,12 +27,9 @@ def get_poll_interval(collection):
     """
     Determine the configured poll interval or make one up
     """
-    cursor = connect(collection)
     try:
-        for doc in cursor:
-            if doc['_id'] == 'client_config':
-                poll_interval = doc['poll_interval']
-    except:
+        poll_interval = collection.find_one({'_id': 'client_config'})['poll_interval']
+    except TypeError:
         poll_interval = 60
         collection.update(
                 {'_id': 'client_config'},
@@ -46,11 +43,8 @@ def get_current_event(collection):
     """
     Determine the configured event
     """
-    cursor = connect(collection)
     try:
-        for doc in cursor:
-            if doc['_id'] == 'client_config':
-                event = doc['current_event']
+        event = collection.find_one({'_id': 'client_config'})['current_event']
     except:
         event = None
         collection.update(

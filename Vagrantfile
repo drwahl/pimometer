@@ -6,7 +6,8 @@ VAGRANTFILE_API_VERSION = "2"
 
 $welcome_script = <<EOS
   ip=$(ip addr show eth0 | grep eth0 | grep inet | cut -d/ -f1| awk '{print $2}')
-  echo "You can now access your instance at http://$ip/"
+  echo "You can view the mongodb data at http://$ip:28017/pi_mometer/pi_collection/"
+  echo "The userfriendly web interface can be accessed at http://$ip/"
 EOS
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -27,11 +28,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell",
     inline: "mkdir -p /etc/pimometer && cp /vagrant/conf/pimometer.conf /etc/pimometer/pimometer.conf && chmod a+r /etc/pimometer/pimometer.conf"
 
-  config.vm.provision "shell",
-    inline: "/vagrant/bin/mongo_config.py -e 'test_event' -p 5"
+#  config.vm.provision "shell",
+#    inline: "/vagrant/bin/mongo_config.py -e 'test_event' -p 5"
 
   config.vm.provision "shell",
-    inline: "/vagrant/bin/daemon.py &"
+    inline: "/vagrant/bin/daemon.py demo=True &"
 
 #not bothering with django for now. just gonna use mongodb rest api
 #  config.vm.provision "shell",
