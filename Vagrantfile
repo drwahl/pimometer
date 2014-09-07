@@ -30,7 +30,7 @@ $welcome_script = <<EOS
   database=$(grep database /vagrant/conf/pimometer.conf | awk '{print $3}')
   collection=$(grep collection /vagrant/conf/pimometer.conf | awk '{print $3}')
   echo "You can view the mongodb data at http://$ip:28017/$database/$collection/"
-  if [ -d /vagrant/pimomter/webui/ ]; then
+  if [ -d /vagrant/webui/ ]; then
       echo "The userfriendly web interface can be accessed at http://$ip/"
   fi
 EOS
@@ -57,9 +57,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "shell",
     inline: "/vagrant/bin/daemon.py demo=True &"
-
-  config.vm.provision "shell",
-    inline: ""
 
   config.vm.provision "shell", inline: $welcome_script
 
