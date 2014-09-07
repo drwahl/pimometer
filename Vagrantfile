@@ -13,7 +13,7 @@ $verify_webui = <<EOS
     ln -s /vagrant/webui /var/www
     ln -s /var/www/thermometer.html /var/www/index.html
     sed -i 's/index.html/thermometer.html/' /etc/lighttpd/lighttpd.conf
-    sed -i "s/localhost/$ip/" /var/www/js/configuration.js
+    sed -i "s/localhost/$ip/g" /var/www/js/configuration.js
     /etc/init.d/lighttpd restart
   else
     webui_installed=0
