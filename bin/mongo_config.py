@@ -54,8 +54,8 @@ logging.basicConfig(
     datefmt='%y.%m.%d %H:%M:%S')
 console = logging.StreamHandler(sys.stderr)
 console.setLevel(logging.WARN)
-logging.getLogger('pimometer').addHandler(console)
-log = logging.getLogger('pimometer')
+logging.getLogger('pimometer-mongo-config').addHandler(console)
+log = logging.getLogger('pimometer-mongo-config')
 
 
 def configure():
@@ -85,11 +85,7 @@ def update_config(collection, event=None, poll_interval=60):
     """
     log.debug("in update_config(%s, %s, %s,)" % (collection, event, poll_interval))
 
-    if pymongo_driver:
-        cursor = collection.find()
-    else:
-        cursor = json.load(urllib2.urlopen(collection))['rows']
-
+    #sometimes, we get a string instead of a NoneType
     if event == 'None':
         event = None
 
@@ -101,18 +97,8 @@ def update_config(collection, event=None, poll_interval=60):
             upsert=True)
 
 def get_config(collection):
-    if pymongo_driver:
-        cursor = collection.find()
-    else:
-        cursor = json.load(urllib2.urlopen(collection))['rows']
-
-    result = None
-
-    for doc in cursor:
-        if doc['_id'] == 'client_config':
-            result = doc
-
-    return result
+    config = collection.find_one({'_id': 'client_config'})
+    return config
 
 
 def main():
