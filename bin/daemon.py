@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import datetime
+import sys
 import time
 import pimometer
 try:
@@ -60,21 +61,50 @@ def get_current_event(collection):
 
     return event
 
-def run():
+def run(demo=False):
     coll = pimometer.configure()
     current_event = None
     while True:
         poll_interval = get_poll_interval(coll)
         event = get_current_event(coll)
+        client_collection = pimometer.configure()
+        timestamp = datetime.datetime.now().isoformat()
+
+        #generate "random" data in for the event "demo"
+        #this is mostly useful for development/testing
+        if demo:
+            poll_interval = 5
+            sensor1 = float(random.randrange(170, 190)) #random data for demo/test purposes
+            sensor2 = float(sensor1 - random.randrange(1, 4)) #random data for demo/test purposes
+            pimometer.update_event(event='demo',
+                                   s1=sensor1,
+                                   s2=sensor2,
+                                   collection=client_collection,
+                                   timestamp=timestamp)
 
         if event != None:
-            client_collection = pimometer.configure()
-            timestamp = datetime.datetime.now().isoformat()
-            sensor1 = float(165) #this needs to pull data from the sensor
-            sensor2 = float(163) #this needs to pull data from the sensor
-            pimometer.update_event(event=event, s1=sensor1, s2=sensor2, collection=client_collection, timestamp=timestamp)
+            sensor1 = 1 #need to pull data from sensor1
+            sensor2 = 2 #need to pull data from sensor2
+            pimometer.update_event(event=event,
+                                   s1=sensor1,
+                                   s2=sensor2,
+                                   collection=client_collection,
+                                   timestamp=timestamp)
 
         time.sleep(poll_interval)
 
 if __name__ == "__main__":
-    run()
+    demo_run = False
+    try:
+        if sys.argv[1] == "demo=True":
+            demo_run = True
+        else:
+            demo_run = False
+    except IndexError:
+        demo_run = False
+
+    if demo_run:
+        import random
+        run(demo=True)
+    else:
+        run(demo=False)
