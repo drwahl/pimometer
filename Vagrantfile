@@ -7,11 +7,13 @@ VAGRANTFILE_API_VERSION = "2"
 $verify_webui = <<EOS
   if [ -d /vagrant/webui/ ]; then
     webui_installed=1
+    ip=$(ip addr show eth0 | grep eth0 | grep inet | cut -d/ -f1| awk '{print $2}')
     apt-get -y -qq install lighttpd >/dev/null
     rm -rf /var/www/
     ln -s /vagrant/webui /var/www
     ln -s /var/www/thermometer.html /var/www/index.html
     sed -i 's/index.html/thermometer.html/' /etc/lighttpd/lighttpd.conf
+    sed -i "s/localhost/$ip/" /var/www/js/configuration.js
     /etc/init.d/lighttpd restart
   else
     webui_installed=0
