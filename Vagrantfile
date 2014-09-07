@@ -7,7 +7,7 @@ VAGRANTFILE_API_VERSION = "2"
 $verify_webui = <<EOS
   if [ -d /vagrant/webui/ ]; then
     webui_installed=1
-    apt-get -y -qq install lighttpd
+    apt-get -y -qq install lighttpd >/dev/null
     rm -rf /var/www/
     ln -s /vagrant/webui /var/www
     ln -s /var/www/thermometer.html /var/www/index.html
@@ -44,10 +44,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "shell", inline: $verify_webui
 
   config.vm.provision "shell",
-    inline: "apt-get -yqqq install python-django python-mongoengine python-pip mongodb-server git"
+    inline: "apt-get -yqqq install python-django python-mongoengine python-pip mongodb-server git >/dev/null"
 
   config.vm.provision "shell",
-    inline: "pip -q install djangorestframework django-rest-framework-mongoengine markdown django-filter"
+    inline: "pip -q install djangorestframework django-rest-framework-mongoengine markdown django-filter >/dev/null"
 
   config.vm.provision "shell",
     inline: "/etc/init.d/mongodb stop && sleep 5 && mongod --quiet --rest --jsonp --dbpath=/var/lib/mongodb --fork --logpath=/var/log/mongodb/mongodb.log"
