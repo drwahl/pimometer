@@ -16,7 +16,7 @@ $verify_webui = <<EOS
     webui_installed=0
   fi
 
-  if [ webui_installed != 1 ]; then
+  if [ $webui_installed != 1 ]; then
     echo ""
     echo "In order to have a working web interface (beyond the mongo API), please ensure to checkout the git submodules as well..."
     sleep 4
