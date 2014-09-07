@@ -11,6 +11,7 @@ $verify_webui = <<EOS
     rm -rf /var/www/
     ln -s /vagrant/webui /var/www
     ln -s /var/www/thermometer.html /var/www/index.html
+    sed -i 's/index.html/thermometer.html/' lighttpd.conf
     /etc/init.d/lighttpd restart
   else
     webui_installed=0
