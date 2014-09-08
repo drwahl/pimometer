@@ -90,14 +90,22 @@ def update_event(collection, event, s1, s2, timestamp):
     log.debug("in update_event(%s, %s, %s, %s, %s)" % (collection, event,
                                                        s1, s2, timestamp))
 
-    s1_existing_data = collection.find_one({'_id': event})['s1']
-    s2_existing_data = collection.find_one({'_id': event})['s2']
+    try:
+        s1_existing_data = collection.find_one({'_id': event})['s1']
+        s2_existing_data = collection.find_one({'_id': event})['s2']
+    except TypeError:
+        s1_existing_data = None
+        s2_existing_data = None
 
     if s1_existing_data:
         s1_data = s1_existing_data + [{timestamp: s1}]
+    else:
+        s1_data = [{timestamp: s1}]
 
     if s2_existing_data:
         s2_data = s2_existing_data + [{timestamp: s2}]
+    else:
+        s2_data = [{timestamp: s2}]
 
     collection.update(
         {'_id': event},
