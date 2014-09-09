@@ -28,6 +28,7 @@ import datetime
 import sys
 import logging
 import os
+import random
 try:
     from pymongo import Connection
     pymongo_driver = True
@@ -79,6 +80,7 @@ def configure():
     else:
         log.debug('using REST interface for communications')
         col = 'http://%s/%s/%s/' % (host, database, collection)
+
     return col
 
 
@@ -93,19 +95,30 @@ def update_event(collection, event, s1, s2, timestamp):
     try:
         s1_existing_data = collection.find_one({'_id': event})['s1']
         s2_existing_data = collection.find_one({'_id': event})['s2']
+        assert type(s1_existing_data) == list
+        assert type(s2_existing_data) == list
     except TypeError:
         s1_existing_data = None
         s2_existing_data = None
 
     if s1_existing_data:
         s1_data = s1_existing_data + [{timestamp: s1}]
+        assert type(s1_data) == list
+        assert len(s1_data) > 1
     else:
         s1_data = [{timestamp: s1}]
 
     if s2_existing_data:
         s2_data = s2_existing_data + [{timestamp: s2}]
+        assert type(s2_data) == list
+        assert len(s2_data) > 1
     else:
         s2_data = [{timestamp: s2}]
+
+    assert type(s1_data) == list
+    assert len(s1_data) >= 1
+    assert type(s2_data) == list
+    assert len(s2_data) >= 1
 
     collection.update(
         {'_id': event},
@@ -122,6 +135,11 @@ def get_event_data(collection, event):
     log.debug("in get_event_data(%s, %s)" % (collection, event))
 
     result = collection.find_one({'_id': event})
+
+    assert type(result) == dict
+    assert result['_id'] == event
+    assert type(random.choice(result['s1'][0].values())) == float or type(random.choice(result['s1'][0].values())) == int
+    assert type(random.choice(result['s1'][0].keys())) == unicode
 
     return result
 

@@ -13,32 +13,24 @@ except ImportError:
 import json
 
 
-def connect(collection):
-    """
-    Return a mongodb cursor
-    """
-    if pymongo_driver:
-        cursor = collection.find()
-    else:
-        cursor = json.load(urllib2.urlopen(collection))['rows']
-
-    return cursor
-
-
 def get_poll_interval(collection):
     """
     Determine the configured poll interval or make one up
     """
+    poll_interval = 60  # set a default poll_interval
     try:
         poll_interval = collection.find_one(
             {'_id': 'client_config'})['poll_interval']
     except TypeError:
-        poll_interval = 60
         collection.update(
             {'_id': 'client_config'},
             {"$set": {
-                'poll_interval': float(poll_interval)}},
+                'poll_interval': poll_interval}},
             upsert=True)
+            poll_interval = collection.find_one(
+                {'_id': 'client_config'})['poll_interval']
+
+    assert type(poll_interval) == int
 
     return poll_interval
 
@@ -47,11 +39,11 @@ def get_current_event(collection):
     """
     Determine the configured event
     """
+    event = None  # set a default event
     try:
         event = collection.find_one(
             {'_id': 'client_config'})['current_event']
     except:
-        event = None
         collection.update(
             {'_id': 'client_config'},
             {"$set": {
@@ -84,8 +76,8 @@ def run(demo=False):
                                    timestamp=timestamp)
 
         if event is not None:
-            sensor1 = 1  # need to pull data from sensor1
-            sensor2 = 2  # need to pull data from sensor2
+            sensor1 = 1.0  # need to pull data from sensor1
+            sensor2 = 2.0  # need to pull data from sensor2
             pimometer.update_event(event=event,
                                    s1=sensor1,
                                    s2=sensor2,

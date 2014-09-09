@@ -48,6 +48,10 @@ mongodb_host = parser.get('pimometer', 'host')
 dbname = parser.get('pimometer', 'database')
 collection_name = parser.get('pimometer', 'collection')
 
+assert type(mongodb_host) == str
+assert type(dbname) == str
+assert type(collection_name) == str
+
 logging.basicConfig(
     level=logging.WARN,
     format='%(asctime)s %(levelname)s - %(message)s',
@@ -90,6 +94,9 @@ def update_config(collection, event=None, poll_interval=60):
                                                  event,
                                                  poll_interval))
 
+    assert type(poll_interval) == float or type(poll_interval) == int
+    assert type(event) == str or type(event) == None
+
     # sometimes, we get a string instead of a NoneType
     if event == 'None':
         event = None
@@ -98,12 +105,19 @@ def update_config(collection, event=None, poll_interval=60):
         {'_id': 'client_config'},
         {"$set": {
             'current_event': event,
-            'poll_interval': float(poll_interval)}},
+            'poll_interval': int(poll_interval)}},
         upsert=True)
+
+    assert collection.find_one({'_id': 'client_config'})['current_event'] == event
+    assert collection.find_one({'_id': 'client_config'})['poll_interval'] == poll_interval
 
 
 def get_config(collection):
+    """
+    Pull the configuration from the client_config document in the database
+    """
     config = collection.find_one({'_id': 'client_config'})
+    assert type(config) == dict
     return config
 
 
@@ -156,11 +170,11 @@ def main():
             sys.exit(1)
         else:
             if args.event and args.poll_interval:
-                update_config(collection, args.event, args.poll_interval)
+                update_config(collection, str(args.event), int(args.poll_interval))
             elif args.event:
-                update_config(collection, event=args.event)
+                update_config(collection, event=str(args.event))
             elif args.poll_interval:
-                update_config(collection, poll_interval=args.poll_interval)
+                update_config(collection, poll_interval=int(args.poll_interval))
 
 
 if __name__ == "__main__":
