@@ -3,6 +3,24 @@ pi-mometer
 
 Raspberry Pi Thermometer project meant for displaying thermometer data collected by an RPi during a bbq/smoker
 
+Requirements
+============
+
+The best way to check software requirements is to check the Vagrantfile to see what it is including in the VM.  But here are the high-level bullet points for required software.
+
+__Software requirements__:
+
+* Yoctopuce python libraries (https://github.com/yoctopuce/yoctolib_python)
+* MongoDB (http://www.mongodb.org/)
+
+
+This project was built with the Raspberry Pi in mind.  However, there is nothing really specific about the Pi that would prevent this code from working on similar devices that support python.
+
+__Hardware requirements__:
+
+* Raspberry Pi (http://www.raspberrypi.org/)
+* Yoctopuce thermocouple (http://www.yoctopuce.com/EN/products/usb-environmental-sensors/yocto-thermocouple)
+
 Data Layout and Input Mapping
 =============================
 Using the supplied command line options and configuration file, here is the mapping:
