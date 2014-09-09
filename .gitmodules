@@ -1,3 +1,6 @@
 [submodule "webui"]
 	path = webui
 	url = https://github.com/gravytrain/automation-interface
+[submodule "libs/yoctolib_python"]
+	path = libs/yoctolib_python
+	url = https://github.com/yoctopuce/yoctolib_python
