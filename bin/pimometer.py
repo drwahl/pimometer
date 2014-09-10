@@ -31,10 +31,10 @@ import os
 import random
 try:
     from pymongo import Connection
-    pymongo_driver = True
+    PYMONGO_DRIVER = True
 except ImportError:
     import urllib2
-    pymongo_driver = False
+    PYMONGO_DRIVER = False
 import json
 from ConfigParser import SafeConfigParser
 
@@ -45,9 +45,9 @@ else:
     config = os.path.join(os.path.dirname(__file__), '../conf/pimometer.conf')
 parser.read(config)
 
-mongodb_host = parser.get('pimometer', 'host')
-dbname = parser.get('pimometer', 'database')
-collection_name = parser.get('pimometer', 'collection')
+MONGODB_HOST = parser.get('pimometer', 'host')
+DBNAME = parser.get('pimometer', 'database')
+COLLECTION_NAME = parser.get('pimometer', 'collection')
 
 logging.basicConfig(
     level=logging.WARN,
@@ -65,13 +65,13 @@ def configure():
     """
     log.debug('in configure')
 
-    host = mongodb_host
+    host = MONGODB_HOST
     log.debug('connecting to mongodb host: %s' % host)
-    database = dbname
+    database = DBNAME
     log.debug('connecting to database name: %s' % database)
-    collection = collection_name
+    collection = COLLECTION_NAME
     log.debug('using collection name: %s' % collection)
-    if pymongo_driver:
+    if PYMONGO_DRIVER:
         log.debug('using pymongo driver for communications')
         con = Connection(host)
         log.debug('selecting database/collection: %s/%s' % (database,
