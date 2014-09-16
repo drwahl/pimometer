@@ -27,8 +27,8 @@ def get_poll_interval(collection):
             {"$set": {
                 'poll_interval': poll_interval}},
             upsert=True)
-            poll_interval = collection.find_one(
-                {'_id': 'client_config'})['poll_interval']
+        poll_interval = collection.find_one(
+            {'_id': 'client_config'})['poll_interval']
 
     assert type(poll_interval) == int
 
